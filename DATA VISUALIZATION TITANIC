@@ -1,0 +1,60 @@
+1. Age Column
+•	Problem: Missing age values in some rows
+•	Solution: Filled missing values using the median of the Age column
+•	Why??:Median is more robust than mean 
+Code:df['Age'].fillna(df['Age'].median(), inplace=True)
+ 2. Cabin Column
+•	Problem: Over 600 missing values (~75%) in the Cabin column
+•	Actions: Created a new binary column HasCabin to indicate whether cabin data is present (1 = yes, 0 = no):
+Code: df['HasCabin'] = df['Cabin'].notna().astype(int)
+•	Extracted the deck letter from the Cabin using the first character:
+Code: df['Deck'] = df['Cabin'].str[0]
+•	Replaced missing deck values with 'Unknown'
+Code: df['Deck'].fillna('Unknown', inplace=True
+ 3.Filled missing values with the mode 
+df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
+4.label encoding
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['Embarked_Label'] = le.fit_transform(df['Embarked'])
+ Why Apply Label Encoding to Embarked?
+ Use Case: Some models require numerical input
+•	Models like scikit-learn's RandomForestClassifier, XGBoost, LightGBM, etc., need numbers, not strings.
+ Label encoding converts categories into numeric class labels
+•	"C" → 0, "Q" → 1, "S" → 2
+•	It compresses data into a single column (unlike one-hot encoding which makes 3 columns)
+ It’s memory-efficient
+•	Especially helpful when the categorical variable has many unique value
+
+
+
+ Data Visualization Report
+Histogram
+•	Most passengers are between 20–40 years old.
+•	Distribution is right-skewed.
+•	A small number of infants (<1 year) and elderly (>70 years).
+Code: import matplotlib.pyplot as plt
+import seaborn as sns
+numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+for col in numeric_cols:
+    plt.figure(figsize=(8, 4))
+    sns.histplot(df[col], bins=30, kde=True, color='skyblue')
+    plt.title(f'Histogram of {col}')
+    plt.xlabel(col)
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
+
+
+ Boxplot
+•	Clear outliers at both ends.
+•	Median Age ≈ 28
+Code     plt.figure(figsize=(8, 4))
+    sns.boxplot(x=df[col], color='lightgreen')
+    plt.title(f'Boxplot of {col}')
+    plt.xlabel(col)
+    plt.grid(True)
+    plt.show()
+
+
+
